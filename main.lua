@@ -24,7 +24,18 @@ rut.Events.OnUpdate(2.5, {"WindowsPlayer", "MacPlayer"}, function(version, playe
         channel:send{
             embed = {
                 title = "**"..player.." has updated!**",
-                description = "```\n"..codeBlockContent.."```",
+                fields = {
+					{
+						name = "",
+						value = "```\n"..codeBlockContent.."```",
+						inline = false
+					},
+                    {
+						name = "",
+						value = "```\n"..version.."```",
+						inline = false
+					},
+                },
                 footer = {
                     text = unix .. " | " .. current_time
                 },
