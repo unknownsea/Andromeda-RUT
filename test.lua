@@ -1,5 +1,8 @@
 local rut = require("./rut.lua")
 
-rut.OnUpdate("version-1", function(version, unix, time)
+local response = rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/WindowsPlayer")
+print(response)
+
+rut.Events.OnUpdate("version-1", function(version, unix, time)
     print(version..unix..time)
-end, 1)
+end, 1, {"WindowsPlayer", "MacPlayer"})

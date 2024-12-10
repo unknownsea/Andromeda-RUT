@@ -1,7 +1,31 @@
 local time = require("timer")
-local rut = {}
+local https = require("https")
 
-function rut.OnUpdate(last_checked_version, callback, check_interval)
+local rut = {
+    Events = {},
+    Functions = {}
+}
+
+function rut.Functions.Get(endpoint)
+    local body = {}
+
+    https.get(endpoint, function(res)
+        res:on("data", function(chunk)
+            table.insert(body, chunk)
+        end)
+
+        res:on("end", function()
+            return table.concat(body)
+        end)
+    end)
+
+end
+
+function rut.Events.OnUpdate(last_checked_version, callback, check_interval, players)
+    for _,v in pairs(players) do
+        print(v)
+    end
+    
     while true do
         local newest = "version-2"
         if last_checked_version ~= newest then
