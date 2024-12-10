@@ -21,19 +21,18 @@ function rut.Events.OnUpdate(check_interval, players, callback)
 
             for _, v in pairs(players) do
                 local last_checked_version = last_checked_versions[tostring(v)] or nil
-                local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v))).clientVersionUpload
+                local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v)))
                 local unix_timestamp = os.time()
                 local current_time = os.date("%Y-%m-%d %H:%M:%S", unix_timestamp)
 
-                if last_checked_version ~= newest then
-                    last_checked_versions[tostring(v)] = newest
-                    -- Save the updated version to the file
+                if last_checked_version ~= newest.clientVersionUpload then
+                    last_checked_versions[tostring(v)] = newest.clientVersionUpload
                     local file = io.open("db.json", "w")
                     if file then
                         file:write(json.encode(last_checked_versions))
                         file:close()
                     end
-                    callback(newest, tostring(v), unix_timestamp, current_time)
+                    callback(newest.clientVersionUpload, tostring(v), unix_timestamp, current_time, newest)
                 end
                 time.sleep(500)
             end
