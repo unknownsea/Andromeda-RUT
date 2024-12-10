@@ -12,22 +12,35 @@ function rut.Functions.Get(endpoint)
     return body
 end
 
-function rut.Events.OnUpdate(last_checked_version, callback, check_interval, players)
-    for _,v in pairs(players) do
-        print(v)
-    end
+function rut.Events.OnUpdate(check_interval, players, callback)
+    coroutine.wrap(function()
+        while true do
+            local file = io.open("db.json", "r")
+            local last_checked_versions = file and json.decode(file:read("*all")) or {}
+            if file then file:close() end
 
-    while true do
-        for _,v in pairs(players) do
-            local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v))).clientVersionUpload
-            if last_checked_version ~= newest then
-                last_checked_version = newest
-                callback(newest)
+            for _, v in pairs(players) do
+                local last_checked_version = last_checked_versions[tostring(v)] or nil
+                local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v))).clientVersionUpload
+                local unix_timestamp = os.time()
+                local current_time = os.date("%Y-%m-%d %H:%M:%S", unix_timestamp)
+
+                if last_checked_version ~= newest then
+                    last_checked_versions[tostring(v)] = newest
+                    -- Save the updated version to the file
+                    local file = io.open("db.json", "w")
+                    if file then
+                        file:write(json.encode(last_checked_versions))
+                        file:close()
+                    end
+                    callback(newest, tostring(v), unix_timestamp, current_time)
+                end
+                time.sleep(500)
             end
-            time.sleep(500)
+
+            time.sleep(tonumber(check_interval) * 1000)
         end
-        time.sleep(tonumber(check_interval) * 1000)
-    end
+    end)()
 end
 
 return rut
