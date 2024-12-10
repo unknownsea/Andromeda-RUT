@@ -24,6 +24,7 @@ function rut.Events.OnUpdate(last_checked_version, callback, check_interval, pla
                 last_checked_version = newest
                 callback(newest)
             end
+            time.sleep(500)
         end
         time.sleep(tonumber(check_interval) * 1000)
     end
