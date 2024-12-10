@@ -19,8 +19,8 @@ function rut.Events.OnUpdate(last_checked_version, callback, check_interval, pla
 
     while true do
         for _,v in pairs(players) do
-            local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v)))
-            if last_checked_version ~= newest.clientVersionUpload then
+            local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v))).clientVersionUpload
+            if last_checked_version ~= newest then
                 last_checked_version = newest
                 callback(newest)
             end
