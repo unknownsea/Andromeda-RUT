@@ -1,5 +1,6 @@
 local time = require("timer")
-local https = require("https")
+local http = require("coro-http")
+local json = require("json")
 
 local rut = {
     Events = {},
@@ -7,31 +8,22 @@ local rut = {
 }
 
 function rut.Functions.Get(endpoint)
-    local body = {}
-
-    https.get(endpoint, function(res)
-        res:on("data", function(chunk)
-            table.insert(body, chunk)
-        end)
-
-        res:on("end", function()
-            return table.concat(body)
-        end)
-    end)
-
+    local response, body = http.request("GET", endpoint)
+    return body
 end
 
 function rut.Events.OnUpdate(last_checked_version, callback, check_interval, players)
     for _,v in pairs(players) do
         print(v)
     end
-    
+
     while true do
-        local newest = "version-2"
-        if last_checked_version ~= newest then
-            last_checked_version = newest
-            print("aura checked")
-            callback("sigma1", "sigma2", "sigma3")
+        for _,v in pairs(players) do
+            local newest = json.decode(rut.Functions.Get("https://clientsettingscdn.roblox.com/v2/client-version/"..tostring(v)))
+            if last_checked_version ~= newest.clientVersionUpload then
+                last_checked_version = newest
+                callback(newest)
+            end
         end
         time.sleep(tonumber(check_interval) * 1000)
     end
