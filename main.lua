@@ -47,5 +47,28 @@ rut.Events.OnUpdate(2.5, {"WindowsPlayer", "MacPlayer"}, function(version, playe
     end
 end)
 
+rut.Events.OnFutureUpdate(2.5, function(version, unix, current_time)
+	local channel = client:getChannel("1315204426075738136")
+    if channel then
+        channel:send{
+            embed = {
+                title = "**Future Roblox Update Detected (DeployHistory)**",
+                fields = {
+                    {
+						name = "",
+						value = "```\n"..version.."```",
+						inline = false
+					},
+                },
+                footer = {
+                    text = unix .. " | " .. current_time
+                },
+                color = 0x000000
+            }
+        }
+    else
+        print("Channel not found!")
+    end
+end)
 
 client:run('Bot ' .. token)
